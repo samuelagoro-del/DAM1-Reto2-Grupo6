@@ -10,13 +10,16 @@ public class Sala {
 	public Sala(String nombre, int identificador) {
 		this.sala = nombre;
 		this.idsala = identificador;
-		this.sesiones =  new ArrayList<>();
-
-
-
+		this.sesiones = new ArrayList<Sesion>();
+	}
+	
+	public Sala() {
+		this.sala = "";
+		this.idsala = 0;
+		this.sesiones = new ArrayList<Sesion>();
 	}
 
-	public void  añadirsesion(Sesion s  ) {
+	public void  añadirsesion(Sesion s) {
 		sesiones.add(s);
 	}
 
@@ -49,7 +52,7 @@ public class Sala {
 	}
 
 	public void setSesiones(ArrayList<Sesion> sesiones) {
-		this.sesiones = sesiones;
+		this.sesiones = new ArrayList<Sesion>();
 	}
 
 	

@@ -4,30 +4,36 @@ import java.time.LocalDate;
 import java.time.LocalTime;
 
 public class Sesion {
-
-
-	private int insesion;
+	private int idsesion;
 	private LocalDate fecha;
 	private LocalTime horainicio;
-	private  LocalTime horafin;
+	private LocalTime horafin;
 	public double precio;
 	private Sala sala;
-	private  Pelicula pelicula;
+	private Pelicula pelicula;
 
-	public Sesion(int identificador, LocalDate fecha, LocalTime horainicio, LocalTime horafin, double precio, Sala sala,
-			Pelicula pelicula) {
-		super();
-		this.insesion = identificador;
+	public Sesion(int identificador, LocalDate fecha, LocalTime horainicio, LocalTime horafin, double precio, Sala sala, Pelicula pelicula) {
+		this.idsesion = identificador;
 		this.fecha = fecha;
 		this.horainicio = horainicio;
 		this.horafin = horafin;
 		this.precio = precio;
-		this.sala = sala;
-		this.pelicula = pelicula;
+		this.sala = new Sala();
+		this.pelicula = new Pelicula();
+	}
+	
+	public Sesion() {
+		this.idsesion = 0;
+		this.fecha = "";
+		this.horainicio = "";
+		this.horafin = "";
+		this.precio = 0;
+		this.sala = new Sala();
+		this.pelicula = new Pelicula();
 	}
 
 	public int getIdentificador() {
-		return insesion;
+		return idsesion;
 	}
 
 	public LocalDate getFecha() {

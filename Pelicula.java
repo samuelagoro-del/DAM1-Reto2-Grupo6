@@ -1,7 +1,6 @@
 package Reto2Grupo6;
 
 public class Pelicula {
-	
 	private String idpelicula;
 	private String titulo;
 	private int duracion;
@@ -14,6 +13,14 @@ public class Pelicula {
 		this.duracion = duracion;
 		this.genero = genero;
 		this.precio = precio;
+	}
+	
+	public Pelicula() {
+		this.idpelicula = "";
+		this.titulo = "";
+		this.duracion = 0;
+		this.genero = "";
+		this.precio = 0;
 	}
 
 	public String getIdpelicula() {

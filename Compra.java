@@ -7,7 +7,7 @@ public class Compra {
 	private String idcompra;
 	private LocalDate fecha;
 	private LocalTime hora;
-	private  double precio;
+	private double precio;
 	private float descuento;
 	private Cliente cliente;
 	
@@ -18,10 +18,20 @@ public class Compra {
 		this.hora = hora;
 		this.precio = precio;
 		this.descuento = descuento;
-		this.cliente = cliente;
+		this.cliente = new Cliente();
+	}
+
+	public Compra() {
+		this.idcompra = "";
+		this.fecha = "";
+		this.hora = "";
+		this.precio = 0;
+		this.descuento = 0;
+		this.cliente = new Cliente();
 	}
 
 
+	
 	public String getIdcompra() {
 		return idcompra;
 	}
@@ -78,7 +88,7 @@ public class Compra {
 
 
 	public void setCliente(Cliente cliente) {
-		this.cliente = cliente;
+		this.cliente = new Cliente();
 	}
  
 }

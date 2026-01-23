@@ -1,29 +1,33 @@
 package Reto2Grupo6;
 
 public class Cliente {
-	private Cliente DNI;
+	private String DNI;
 	private String nombre;
 	private String apellido;
 	private String gmail;
 	private String contraseña;
 	
 	
-	public Cliente(Cliente dNI, String nombre, String apellido, String gmail, String contraseña) {
-		DNI = dNI;
+	public Cliente(String DNI, String nombre, String apellido, String gmail, String contraseña) {
+		this.DNI = DNI;
 		this.nombre = nombre;
 		this.apellido = apellido;
 		this.gmail = gmail;
 		this.contraseña = contraseña;
 	}
-
-
-	public Cliente getDNI() {
-		return DNI;
+	
+	public Cliente() {
+		this.DNI = "";
+		this.nombre = "";
+		this.apellido = "";
+		this.gmail = "";
+		this.contraseña = "";
 	}
 
 
-	public void setDNI(Cliente dNI) {
-		DNI = dNI;
+
+	public void setDNI(Cliente DNI) {
+		this.DNI = DNI;
 	}
 
 
