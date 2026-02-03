@@ -77,4 +77,5 @@ public class Entrada {
                "Personas: " + numeropersonas + "\n" +
                "Precio:   " + String.format("%.2f", precio) + " €\n";    }
 
+
 }
