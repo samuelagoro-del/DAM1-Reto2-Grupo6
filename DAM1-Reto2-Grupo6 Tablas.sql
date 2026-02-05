@@ -5,7 +5,7 @@ DNI char(9) primary key,
 nombre varchar(50) not null,
 apellido varchar(100) not null,
 correo varchar(200) unique not null,
-contrasena varchar(255) not null
+contraseña varchar(255) not null
 );
 
 create table Compra (
