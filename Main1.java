@@ -11,319 +11,326 @@ import java.util.Scanner;
 
 public class Main1 {
 
-    // ---------------- FUNCIONES ----------------
+	// ---------------- FUNCIONES ----------------
 
-    // 1️⃣ Login o registro de usuario (CON CONTROL DE DNI DUPLICADO)
-    public static Cliente loginUsuario(Connection con, Scanner sc) throws SQLException {
-        while (true) {
-            System.out.println("1 - Iniciar sesión");
-            System.out.println("2 - Registrarse");
-            System.out.print("Opción: ");
-            String opcion = sc.nextLine();
+	// 1️⃣ Login o registro de usuario 
+	public static Cliente loginUsuario(Connection con, Scanner sc) throws SQLException {
+		while (true) {
+			System.out.println("1 - Iniciar sesión");
+			System.out.println("2 - Registrarse");
+			System.out.print("Opción: ");
+			String opcion = sc.nextLine();
 
-            if (opcion.equals("1")) {
-                System.out.print("DNI: ");
-                String dni = sc.nextLine();
-                System.out.print("Contraseña: ");
-                String pass = sc.nextLine();
+			if (opcion.equals("1")) {
+				System.out.print("DNI: ");
+				String dni = sc.nextLine();
+				System.out.print("Contraseña: ");
+				String pass = sc.nextLine();
 
-                String sql = "SELECT * FROM Cliente WHERE DNI=? AND contraseña=?";
-                try (PreparedStatement ps = con.prepareStatement(sql)) {
-                    ps.setString(1, dni);
-                    ps.setString(2, pass);
+				String sql = "SELECT * FROM Cliente WHERE DNI=? AND contraseña=?";
+				try (PreparedStatement ps = con.prepareStatement(sql)) {
+					ps.setString(1, dni);
+					ps.setString(2, pass);
 
-                    try (ResultSet rs = ps.executeQuery()) {
-                        if (rs.next()) {
-                            System.out.println("\nLogin correcto.\n");
-                            return new Cliente(
-                                    rs.getString("DNI"),
-                                    rs.getString("nombre"),
-                                    rs.getString("apellido"),
-                                    rs.getString("correo"),
-                                    rs.getString("contraseña")
-                            );
-                        } else {
-                            System.out.println("DNI o contraseña incorrectos.\n");
-                        }
-                    }
-                }
+					try (ResultSet rs = ps.executeQuery()) {
+						if (rs.next()) {
+							System.out.println("\nLogin correcto.\n");
+							return new Cliente(
+									rs.getString("DNI"),
+									rs.getString("nombre"),
+									rs.getString("apellido"),
+									rs.getString("correo"),
+									rs.getString("contraseña")
+									);
+						} else {
+							System.out.println("DNI o contraseña incorrectos.\n");
+						}
+					}
+				}
 
-            } else if (opcion.equals("2")) {
+			} else if (opcion.equals("2")) {
 
-                String dni, nombre, apellido, correo, contraseña;
+				String dni, nombre, apellido, correo, contraseña;
 
-                while (true) {
-                    System.out.print("DNI: ");
-                    dni = sc.nextLine();
-                    System.out.print("Nombre: ");
-                    nombre = sc.nextLine();
-                    System.out.print("Apellido: ");
-                    apellido = sc.nextLine();
-                    System.out.print("Correo: ");
-                    correo = sc.nextLine();
-                    System.out.print("Contraseña: ");
-                    contraseña = sc.nextLine();
+				while (true) {
+					System.out.print("DNI: ");
+					dni = sc.nextLine();
+					System.out.print("Nombre: ");
+					nombre = sc.nextLine();
+					System.out.print("Apellido: ");
+					apellido = sc.nextLine();
+					System.out.print("Correo: ");
+					correo = sc.nextLine();
+					System.out.print("Contraseña: ");
+					contraseña = sc.nextLine();
 
-                    String sqlInsert = "INSERT INTO Cliente VALUES (?, ?, ?, ?, ?)";
+					String sqlInsert = "INSERT INTO Cliente VALUES (?, ?, ?, ?, ?)";
 
-                    try (PreparedStatement ps = con.prepareStatement(sqlInsert)) {
-                        ps.setString(1, dni);
-                        ps.setString(2, nombre);
-                        ps.setString(3, apellido);
-                        ps.setString(4, correo);
-                        ps.setString(5, contraseña);
-                        ps.executeUpdate();
+					try (PreparedStatement ps = con.prepareStatement(sqlInsert)) {
+						ps.setString(1, dni);
+						ps.setString(2, nombre);
+						ps.setString(3, apellido);
+						ps.setString(4, correo);
+						ps.setString(5, contraseña);
+						ps.executeUpdate();
 
-                        System.out.println("\nUsuario registrado correctamente.\n");
-                        return new Cliente(dni, nombre, apellido, correo, contraseña);
+						System.out.println("\nUsuario registrado correctamente.\n");
+						return new Cliente(dni, nombre, apellido, correo, contraseña);
 
-                    } catch (SQLException ex) {
-                        // Código típico de DNI duplicado en MySQL
-                        if (ex.getErrorCode() == 1062) {
-                            System.out.println("\n❌ ERROR: El DNI ya está registrado. Vuelve a intentarlo.\n");
-                        } else {
-                            throw ex;
-                        }
-                    }
-                }
+					} catch (SQLException ex) {
 
-            } else {
-                System.out.println("Opción inválida.\n");
-            }
-        }
-    }
+						if (ex.getErrorCode() == 1062) {
+							System.out.println("\n❌ ERROR: El DNI ya está registrado. Vuelve a intentarlo.\n");
+						} else {
+							throw ex;
+						}
+					}
+				}
 
-    // 2️⃣ Seleccionar película
-    public static Pelicula seleccionarPelicula(Connection con, Scanner sc) throws SQLException {
-        ArrayList<Pelicula> peliculas = new ArrayList<>();
+			} else {
+				System.out.println("Opción inválida.\n");
+			}
+		}
+	}
 
-        String sql = "SELECT * FROM Pelicula ORDER BY idPeli";
-        try (PreparedStatement ps = con.prepareStatement(sql);
-             ResultSet rs = ps.executeQuery()) {
+	// 2️⃣ Seleccionar película
+	public static Pelicula seleccionarPelicula(Connection con, Scanner sc) throws SQLException {
+		ArrayList<Pelicula> peliculas = new ArrayList<>();
 
-            while (rs.next()) {
-                peliculas.add(new Pelicula(
-                        rs.getInt("idPeli"),
-                        rs.getString("titulo"),
-                        rs.getInt("duracion"),
-                        rs.getString("genero"),
-                        rs.getDouble("precio")
-                ));
-            }
-        }
+		String sql = "SELECT * FROM Pelicula ORDER BY idPeli";
+		try (PreparedStatement ps = con.prepareStatement(sql);
+				ResultSet rs = ps.executeQuery()) {
 
-        System.out.println("\nPelículas disponibles:");
-        for (int i = 0; i < peliculas.size(); i++) {
-            System.out.println((i + 1) + " - " + peliculas.get(i).getTitulo());
-        }
+			while (rs.next()) {
+				peliculas.add(new Pelicula(
+						rs.getInt("idPeli"),
+						rs.getString("titulo"),
+						rs.getInt("duracion"),
+						rs.getString("genero"),
+						rs.getDouble("precio")
+						));
+			}
+		}
 
-        int opcion;
-        do {
-            System.out.print("Seleccione película: ");
-            opcion = sc.nextInt();
-            sc.nextLine();
-        } while (opcion < 1 || opcion > peliculas.size());
+		System.out.println("\nPelículas disponibles:");
+		for (int i = 0; i < peliculas.size(); i++) {
+			System.out.println((i + 1) + " - " + peliculas.get(i).getTitulo());
+		}
 
-        return peliculas.get(opcion - 1);
-    }
+		int opcion;
+		do {
+			System.out.print("Seleccione película: ");
+			opcion = sc.nextInt();
+			sc.nextLine();
+		} while (opcion < 1 || opcion > peliculas.size());
 
-    // 3️⃣ Seleccionar sesión
-    public static Sesion seleccionarSesion(Connection con, Scanner sc, Pelicula pelicula) throws SQLException {
-        ArrayList<Sesion> sesiones = new ArrayList<>();
-        ArrayList<LocalDate> dias = new ArrayList<>();
+		return peliculas.get(opcion - 1);
+	}
 
-        String sql = """
-                SELECT s.*, sa.nombre AS nombreSala
-                FROM Sesion s
-                JOIN Sala sa ON s.idSala = sa.idSala
-                WHERE s.idPeli=?
-                ORDER BY s.fecha, s.horaIni
-                """;
+	// 3️⃣ Seleccionar sesión
+	public static Sesion seleccionarSesion(Connection con, Scanner sc, Pelicula pelicula) throws SQLException {
+		ArrayList<Sesion> sesiones = new ArrayList<>();
+		ArrayList<LocalDate> dias = new ArrayList<>();
 
-        try (PreparedStatement ps = con.prepareStatement(sql)) {
-            ps.setInt(1, pelicula.getIdPelicula());
+		String sql = """
+				SELECT s.*, sa.nombre AS nombreSala
+				FROM Sesion s
+				JOIN Sala sa ON s.idSala = sa.idSala
+				WHERE s.idPeli=?
+				ORDER BY s.fecha, s.horaIni
+				""";
 
-            try (ResultSet rs = ps.executeQuery()) {
-                while (rs.next()) {
-                    Sala sala = new Sala(rs.getString("nombreSala"), rs.getInt("idSala"));
-                    Sesion sesion = new Sesion(
-                            rs.getInt("idSesion"),
-                            rs.getDate("fecha").toLocalDate(),
-                            rs.getTime("horaIni").toLocalTime(),
-                            rs.getTime("horaFin").toLocalTime(),
-                            rs.getDouble("precio"),
-                            sala,
-                            pelicula
-                    );
-                    sesiones.add(sesion);
+		try (PreparedStatement ps = con.prepareStatement(sql)) {
+			ps.setInt(1, pelicula.getIdPelicula());
 
-                    if (!dias.contains(sesion.getFecha()))
-                        dias.add(sesion.getFecha());
-                }
-            }
-        }
+			try (ResultSet rs = ps.executeQuery()) {
+				while (rs.next()) {
+					Sala sala = new Sala(rs.getString("nombreSala"), rs.getInt("idSala"));
+					Sesion sesion = new Sesion(
+							rs.getInt("idSesion"),
+							rs.getDate("fecha").toLocalDate(),
+							rs.getTime("horaIni").toLocalTime(),
+							rs.getTime("horaFin").toLocalTime(),
+							rs.getDouble("precio"),
+							sala,
+							pelicula
+							);
+					sesiones.add(sesion);
 
-        System.out.println("\nDías disponibles:");
-        for (int i = 0; i < dias.size(); i++) {
-            System.out.println((i + 1) + " - " + dias.get(i));
-        }
+					if (!dias.contains(sesion.getFecha()))
+						dias.add(sesion.getFecha());
+				}
+			}
+		}
 
-        int diaSel;
-        do {
-            System.out.print("Seleccione día: ");
-            diaSel = sc.nextInt();
-            sc.nextLine();
-        } while (diaSel < 1 || diaSel > dias.size());
+		System.out.println("\nDías disponibles:");
+		for (int i = 0; i < dias.size(); i++) {
+			System.out.println((i + 1) + " - " + dias.get(i));
+		}
 
-        LocalDate dia = dias.get(diaSel - 1);
+		int diaSel;
+		do {
+			System.out.print("Seleccione día: ");
+			diaSel = sc.nextInt();
+			sc.nextLine();
+		} while (diaSel < 1 || diaSel > dias.size());
 
-        ArrayList<Sesion> sesionesDia = new ArrayList<>();
-        for (Sesion s : sesiones) {
-            if (s.getFecha().equals(dia))
-                sesionesDia.add(s);
-        }
+		LocalDate dia = dias.get(diaSel - 1);
 
-        System.out.println("\nSesiones:");
-        for (int i = 0; i < sesionesDia.size(); i++) {
-            Sesion s = sesionesDia.get(i);
-            System.out.println((i + 1) + " - " + s.getHoraInicio() +
-                    " | Sala " + s.getSala().getNombre() +
-                    " | " + s.getPrecio() + "€");
-        }
+		ArrayList<Sesion> sesionesDia = new ArrayList<>();
+		for (Sesion s : sesiones) {
+			if (s.getFecha().equals(dia))
+				sesionesDia.add(s);
+		}
 
-        int sesSel;
-        do {
-            System.out.print("Seleccione sesión: ");
-            sesSel = sc.nextInt();
-            sc.nextLine();
-        } while (sesSel < 1 || sesSel > sesionesDia.size());
+		System.out.println("\nSesiones:");
+		for (int i = 0; i < sesionesDia.size(); i++) {
+			Sesion s = sesionesDia.get(i);
+			System.out.println((i + 1) + " - " + s.getHoraInicio() +
+					" | Sala " + s.getSala().getNombre() +
+					" | " + s.getPrecio() + "€");
+		}
 
-        return sesionesDia.get(sesSel - 1);
-    }
+		int sesSel;
+		do {
+			System.out.print("Seleccione sesión: ");
+			sesSel = sc.nextInt();
+			sc.nextLine();
+		} while (sesSel < 1 || sesSel > sesionesDia.size());
 
-    // 4️⃣ Registrar compra
-    public static int registrarCompra(Connection con, Cliente cliente,
-                                     double total, float descuento) throws SQLException {
+		return sesionesDia.get(sesSel - 1);
+	}
 
-        String sql = "INSERT INTO Compra (fecha, hora, precio, descuento, DNI) VALUES (?, ?, ?, ?, ?)";
+	// 4️⃣ Registrar compra
+	public static int registrarCompra(Connection con, Cliente cliente,
+			double total, float descuento) throws SQLException {
 
-        try (PreparedStatement ps = con.prepareStatement(sql, Statement.RETURN_GENERATED_KEYS)) {
-            ps.setDate(1, Date.valueOf(LocalDate.now()));
-            ps.setTime(2, Time.valueOf(LocalTime.now()));
-            ps.setDouble(3, total);
-            ps.setFloat(4, descuento);
-            ps.setString(5, cliente.getDNI());
-            ps.executeUpdate();
+		String sql = "INSERT INTO Compra (fecha, hora, precio, descuento, DNI) VALUES (?, ?, ?, ?, ?)";
 
-            ResultSet rs = ps.getGeneratedKeys();
-            if (rs.next())
-                return rs.getInt(1);
-        }
-        return 0;
-    }
+		try (PreparedStatement ps = con.prepareStatement(sql, Statement.RETURN_GENERATED_KEYS)) {
+			ps.setDate(1, Date.valueOf(LocalDate.now()));
+			ps.setTime(2, Time.valueOf(LocalTime.now()));
+			ps.setDouble(3, total);
+			ps.setFloat(4, descuento);
+			ps.setString(5, cliente.getDNI());
+			ps.executeUpdate();
 
-    // 5️⃣ Registrar entrada
-    public static void registrarEntrada(Connection con, Entrada e, int idCompra) throws SQLException {
-        String sql = "INSERT INTO Entrada (descuento, precio, num_pers, idCompra, idSesion) " +
-                     "VALUES (0, ?, ?, ?, ?)";
+			ResultSet rs = ps.getGeneratedKeys();
+			if (rs.next())
+				return rs.getInt(1);
+		}
+		return 0;
+	}
 
-        try (PreparedStatement ps = con.prepareStatement(sql)) {
-            ps.setDouble(1, e.getPrecio());
-            ps.setInt(2, e.getNumeropersonas());
-            ps.setInt(3, idCompra);
-            ps.setInt(4, e.getSesion().getIdentificador());
-            ps.executeUpdate();
-        }
-    }
+	// 5️⃣ Registrar entrada
+	public static void registrarEntrada(Connection con, Entrada e, int idCompra) throws SQLException {
+		String sql = "INSERT INTO Entrada (descuento, precio, num_pers, idCompra, idSesion) " +
+				"VALUES (0, ?, ?, ?, ?)";
 
-    // 6️⃣ Guardar ticket
-    public static void guardarTicket(Cliente c, ArrayList<Entrada> entradas,
-                                     double total, float desc, double totalFinal) {
+		try (PreparedStatement ps = con.prepareStatement(sql)) {
+			ps.setDouble(1, e.getPrecio());
+			ps.setInt(2, e.getNumeropersonas());
+			ps.setInt(3, idCompra);
+			ps.setInt(4, e.getSesion().getIdentificador());
+			ps.executeUpdate();
+		}
+	}
 
-        try {
-            File dir = new File("src/Reto2Grupo6/tickets");
-            if (!dir.exists())
-                dir.mkdir();
+	// 6️⃣ Guardar ticket
+	public static void guardarTicket(Cliente c, ArrayList<Entrada> entradas,
+			double total, float desc, double totalFinal) {
 
-            String ruta = dir + "/ticket_" + c.getDNI() + "_" +
-                          System.currentTimeMillis() + ".txt";
+		StringBuilder sb = new StringBuilder();
 
-            try (FileWriter fw = new FileWriter(ruta)) {
-                fw.write("TICKET DE COMPRA\n");
-                fw.write("Cliente: " + c.getNombre() + " " + c.getApellido() + "\n");
-                fw.write("---------------------------------\n");
+		sb.append("TICKET DE COMPRA\n");
+		sb.append("Cliente: ").append(c.getNombre()).append(" ").append(c.getApellido()).append("\n");
+		sb.append("---------------------------------\n");
 
-                for (Entrada e : entradas)
-                    fw.write(e + "\n");
+		for (Entrada e : entradas)
+			sb.append(e).append("\n");
 
-                fw.write("---------------------------------\n");
-                fw.write("Total: " + total + "€\n");
-                fw.write("Descuento: " + (desc * 100) + "%\n");
-                fw.write("Total a pagar: " + totalFinal + "€\n");
-            }
+		sb.append("---------------------------------\n");
+		sb.append("Total: ").append(total).append("€\n");
+		sb.append("Descuento: ").append(desc * 100).append("%\n");
+		sb.append("Total a pagar: ").append(totalFinal).append("€\n");
 
-            System.out.println("\nTicket guardado correctamente.");
+		System.out.println("\n" + sb);
 
-        } catch (IOException e) {
-            System.out.println("Error al guardar ticket.");
-        }
-    }
+try {
+			File dir = new File("src/Reto2Grupo6/tickets");
+			if (!dir.exists())
+				dir.mkdir();
 
-    // ---------------- MAIN ----------------
-    public static void main(String[] args) {
-        Scanner sc = new Scanner(System.in);
+			String ruta = dir + "/ticket_" + c.getDNI() + "_" +
+					System.currentTimeMillis() + ".txt";
 
-        try (Connection con = BDconexion.getConexion()) {
+			try (FileWriter fw = new FileWriter(ruta)) {
+				fw.write(sb.toString());
+			}
 
-            System.out.println("🎬 Bienvenido al cine 🎬");
+			System.out.println("\nTicket guardado correctamente en archivo.");
 
-            ArrayList<Entrada> entradas = new ArrayList<>();
-            boolean seguir = true;
+		} catch (IOException e) {
+			System.out.println("Error al guardar ticket.");
+		}
+	}
 
-            while (seguir) {
-                Pelicula p = seleccionarPelicula(con, sc);
-                Sesion s = seleccionarSesion(con, sc, p);
 
-                System.out.print("Número de personas: ");
-                int n = sc.nextInt();
-                sc.nextLine();
+	// ---------------- MAIN ----------------
+	public static void main(String[] args) {
+		Scanner sc = new Scanner(System.in);
 
-                Entrada e = new Entrada();
-                e.setSesion(s);
-                e.setNumeropersonas(n);
-                e.setPrecio(s.getPrecio() * n);
-                entradas.add(e);
+		try (Connection con = BDconexion.getConexion()) {
 
-                System.out.print("¿Añadir otra película? (s/n): ");
-                seguir = sc.nextLine().equalsIgnoreCase("s");
-            }
+			System.out.println("🎬 Bienvenido al cine 🎬");
 
-            double total = 0;
-            for (Entrada e : entradas)
-                total += e.getPrecio();
+			ArrayList<Entrada> entradas = new ArrayList<>();
+			boolean seguir = true;
 
-            float descuento =
-                    entradas.size() == 2 ? 0.20f :
-                    entradas.size() >= 3 ? 0.30f : 0;
+			while (seguir) {
+				Pelicula p = seleccionarPelicula(con, sc);
+				Sesion s = seleccionarSesion(con, sc, p);
 
-            double totalFinal = total * (1 - descuento);
+				System.out.print("Número de personas: ");
+				int n = sc.nextInt();
+				sc.nextLine();
 
-            System.out.println("\nDebe iniciar sesión para finalizar la compra\n");
-            Cliente cliente = loginUsuario(con, sc);
+				Entrada e = new Entrada();
+				e.setSesion(s);
+				e.setNumeropersonas(n);
+				e.setPrecio(s.getPrecio() * n);
+				entradas.add(e);
 
-            int idCompra = registrarCompra(con, cliente, totalFinal, descuento);
+				System.out.print("¿Añadir otra película? (s/n): ");
+				seguir = sc.nextLine().equalsIgnoreCase("s");
+			}
 
-            for (Entrada e : entradas)
-                registrarEntrada(con, e, idCompra);
+			double total = 0;
+			for (Entrada e : entradas)
+				total += e.getPrecio();
 
-            guardarTicket(cliente, entradas, total, descuento, totalFinal);
+			float descuento =
+					entradas.size() == 2 ? 0.20f :
+						entradas.size() >= 3 ? 0.30f : 0;
 
-            System.out.println("\nGracias por su compra.");
+						double totalFinal = total * (1 - descuento);
 
-        } catch (SQLException e) {
-            e.printStackTrace();
-        }
+						System.out.println("\nDebe iniciar sesión para finalizar la compra\n");
+						Cliente cliente = loginUsuario(con, sc);
 
-        sc.close();
-    }
+						int idCompra = registrarCompra(con, cliente, totalFinal, descuento);
+
+						for (Entrada e : entradas)
+							registrarEntrada(con, e, idCompra);
+
+						guardarTicket(cliente, entradas, total, descuento, totalFinal);
+
+						System.out.println("\nGracias por su compra.");
+
+		} catch (SQLException e) {
+			e.printStackTrace();
+		}
+
+		sc.close();
+	}
 }
